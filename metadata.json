@@ -1,0 +1,5 @@
+{
+  "name": "AutoTube: AI Video Generation Platform",
+  "description": "A comprehensive platform for scaling YouTube channels with high-quality, faceless videos. Users create Master Templates by analyzing competitors and visual styles, then generate videos from topics automatically. The dashboard allows management of templates and tracking of video generation status.",
+  "requestFramePermissions": []
+}

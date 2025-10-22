@@ -1,10 +1,11 @@
 
+
 import React, { useState } from 'react';
 import type { Template } from './MainAppLayout';
 import { TemplateIcon, PlusIcon, PencilIcon, TrashIcon, CheckCircleIcon, ClockIcon, ExclamationCircleIcon } from './icons';
 import CreateTemplateWizard from './CreateTemplateWizard';
 import { useLanguage } from '../hooks/useLanguage';
-import { AnalysisResult } from './AnalysisResult';
+import TemplateDetailView from './TemplateDetailView';
 
 interface TemplatesViewProps {
     templates: Template[];
@@ -99,24 +100,8 @@ const TemplatesView: React.FC<TemplatesViewProps> = ({ templates, onSaveTemplate
 
                     {/* Template Details */}
                     <div className="lg:col-span-8">
-                        {selectedTemplate ? (
-                            <div className="space-y-6">
-                                <AnalysisResult 
-                                    title={t('templates.analysis_competitor_title')}
-                                    content={selectedTemplate.competitorAnalysisResult || null}
-                                    isLoading={selectedTemplate.status === 'analyzing'}
-                                />
-                                <AnalysisResult 
-                                    title={t('templates.analysis_visual_title')}
-                                    content={selectedTemplate.visualStylePrompt || null}
-                                    isLoading={selectedTemplate.status === 'analyzing'}
-                                />
-                            </div>
-                        ) : (
-                            <div className="flex items-center justify-center h-full text-gray-500 text-center p-8 bg-gray-800 rounded-lg border border-gray-700">
-                                {t('templates.no_template_selected')}
-                            </div>
-                        )}
+                        {/* fix: Replace inline template detail logic with TemplateDetailView component */}
+                        <TemplateDetailView template={selectedTemplate} />
                     </div>
                 </div>
             )}

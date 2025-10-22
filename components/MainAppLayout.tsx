@@ -1,5 +1,3 @@
-
-
 import React, { useState } from 'react';
 import Sidebar from './Sidebar';
 import TemplatesView from './TemplatesView';
@@ -10,8 +8,8 @@ import TeamView from './TeamView';
 import SchedulerView from './SchedulerView';
 import ProfileView from './ProfileView';
 import { DashboardView, Page } from '../App';
-// fix: Import Gemini API services for template analysis.
-import { analyzeCompetitorVideos, generateVisualStylePrompt } from '../services/geminiService';
+// UPDATE: Import the new secure server-side analysis function
+import { analyzeTemplateOnServer } from '../services/geminiService';
 
 // Type definitions
 export type TemplateStatus = 'ready' | 'analyzing' | 'error';
@@ -104,10 +102,11 @@ const MainAppLayout: React.FC<MainAppLayoutProps> = ({ onLogout, onNavigate }) =
 
     const currentUser = teamMembers.find(m => m.id === 'user1');
 
-    // fix: Replace mock timeout with async calls to the Gemini API for analysis.
+    // UPDATE: This function now calls our secure backend.
     const handleSaveTemplate = async (templateData: { id?: string; name: string; voiceId: string; links: string[], files: File[] }) => {
         const { id, name, voiceId, links, files } = templateData;
 
+        // Immediately update the UI to show the 'analyzing' state
         const newTemplate: Template = {
             id: id || `template-${Date.now()}`,
             name,
@@ -115,8 +114,6 @@ const MainAppLayout: React.FC<MainAppLayoutProps> = ({ onLogout, onNavigate }) =
             sourceLinks: links,
             sourceFiles: files,
             status: 'analyzing',
-            competitorAnalysisResult: undefined,
-            visualStylePrompt: undefined,
         };
 
         let updatedTemplates;
@@ -128,18 +125,18 @@ const MainAppLayout: React.FC<MainAppLayoutProps> = ({ onLogout, onNavigate }) =
         setTemplates(updatedTemplates);
 
         try {
-            const [competitorAnalysisResult, visualStylePrompt] = await Promise.all([
-                analyzeCompetitorVideos(links),
-                generateVisualStylePrompt(files)
-            ]);
+            // Make ONE secure call to our backend
+            const { competitorAnalysisResult, visualStylePrompt } = await analyzeTemplateOnServer(links, files);
 
+            // Update the template with the results from the backend
             setTemplates(prevTemplates => prevTemplates.map(t => 
                 t.id === newTemplate.id 
                 ? { ...t, status: 'ready', competitorAnalysisResult, visualStylePrompt } 
                 : t
             ));
         } catch (error) {
-            console.error("Error processing template with Gemini API:", error);
+            console.error("Error calling backend to process template:", error);
+            // If the backend call fails, update the UI to show an error state
             setTemplates(prevTemplates => prevTemplates.map(t => 
                 t.id === newTemplate.id ? { ...t, status: 'error' } : t
             ));
@@ -147,10 +144,7 @@ const MainAppLayout: React.FC<MainAppLayoutProps> = ({ onLogout, onNavigate }) =
     };
 
     const handleSelectTemplate = (templateId: string) => {
-        // A full implementation would likely navigate to a template detail view.
-        // For now, we'll log to the console to show the action is captured and fix the prop error.
         console.log("Selected template with ID:", templateId);
-        // e.g., setActiveView('templateDetail');
     };
 
     const handleInviteMember = (email: string, role: TeamMemberRole) => {

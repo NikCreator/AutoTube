@@ -29,7 +29,10 @@
       "problemText": "The Problem:",
       "problemDesc": "Manual content creation is slow. Simple automation tools produce low-quality, generic videos that viewers ignore.",
       "solutionText": "The Solution:",
-      "solutionDesc": "AutoTube's Master Templates act like your channel's DNA, ensuring every AI-generated video is on-brand, high-quality, and engaging."
+      "solutionDesc": "AutoTube's Master Templates act like your channel's DNA, ensuring every AI-generated video is on-brand, high-quality, and engaging.",
+      "step_create": "Create",
+      "step_configure": "Configure",
+      "step_results": "Get Results"
     },
     "steps": {
       "process": "The Process",

@@ -97,15 +97,15 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted, onNavigate, isA
                     <div className="mt-10 flex items-center justify-center space-x-8">
                         <div className="flex items-center text-gray-400">
                             <TemplateIcon className="h-6 w-6 mr-2 text-gray-400"/>
-                            <span>Create</span>
+                            <span>{t('landing.problem.step_create')}</span>
                         </div>
                          <div className="flex items-center text-gray-400">
                             <CpuChipIcon className="h-6 w-6 mr-2 text-gray-400"/>
-                            <span>Configure</span>
+                            <span>{t('landing.problem.step_configure')}</span>
                         </div>
                          <div className="flex items-center text-gray-400">
                             <ArrowTrendingUpIcon className="h-6 w-6 mr-2 text-indigo-400"/>
-                            <span>Get Results</span>
+                            <span>{t('landing.problem.step_results')}</span>
                         </div>
                     </div>
                 </div>

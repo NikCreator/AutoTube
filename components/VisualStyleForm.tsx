@@ -1,35 +1,39 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { LoadingSpinner } from './LoadingSpinner';
 import { UploadIcon, PhotoIcon } from './icons';
+import { useLanguage } from '../hooks/useLanguage';
 
 interface VisualStyleFormProps {
     onSubmit: (files: File[]) => void;
     isLoading: boolean;
+    initialFiles?: File[];
 }
 
-export const VisualStyleForm: React.FC<VisualStyleFormProps> = ({ onSubmit, isLoading }) => {
-    const [files, setFiles] = useState<File[]>([]);
+export const VisualStyleForm: React.FC<VisualStyleFormProps> = ({ onSubmit, isLoading, initialFiles }) => {
+    const { t } = useLanguage();
+    const [files, setFiles] = useState<File[]>(initialFiles || []);
     const [previews, setPreviews] = useState<string[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // FIX: Add useEffect to revoke object URLs and prevent memory leaks.
-    // This cleanup function will be called when the component unmounts or when
-    // the `previews` array is replaced, ensuring old URLs are released.
     useEffect(() => {
+        if (initialFiles && initialFiles.length > 0 && previews.length === 0) {
+            const initialPreviews = initialFiles.map(file => URL.createObjectURL(file));
+            setPreviews(initialPreviews);
+        }
+
         return () => {
             previews.forEach(url => URL.revokeObjectURL(url));
         };
-    }, [previews]);
+    }, [initialFiles]); // Only run when initialFiles changes
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
+            // Clean up old previews before creating new ones
+            previews.forEach(url => URL.revokeObjectURL(url));
+
             const selectedFiles = Array.from(e.target.files).slice(0, 5);
             setFiles(selectedFiles);
 
-            // FIX: Explicitly type 'file' as File to resolve TypeScript error on the next line.
-            // The error "Argument of type 'unknown' is not assignable to parameter of type 'Blob | MediaSource'"
-            // suggests a type inference issue with `Array.from(e.target.files)`.
             const newPreviews = selectedFiles.map((file: File) => URL.createObjectURL(file));
             setPreviews(newPreviews);
         }
@@ -52,10 +56,10 @@ export const VisualStyleForm: React.FC<VisualStyleFormProps> = ({ onSubmit, isLo
         <div className="bg-gray-800 rounded-xl shadow-2xl p-6 border border-gray-700">
             <h2 className="text-xl font-bold mb-4 flex items-center">
                 <PhotoIcon className="h-6 w-6 mr-2 text-green-400" />
-                Фаза 1Б: Генерация визуального стиля
+                {t('visual_form.title')}
             </h2>
             <p className="text-gray-400 mb-4 text-sm">
-                Загрузите до 5 скриншотов с видео, стиль которых вам нравится. AI опишет стиль и создаст промт для генерации изображений.
+                {t('visual_form.subtitle')}
             </p>
             
             <div 
@@ -66,7 +70,7 @@ export const VisualStyleForm: React.FC<VisualStyleFormProps> = ({ onSubmit, isLo
                     <UploadIcon className="mx-auto h-12 w-12 text-gray-500" />
                     <div className="flex text-sm text-gray-400">
                         <span className="relative font-medium text-indigo-400 hover:text-indigo-300">
-                           Выберите файлы
+                           {t('visual_form.select_files')}
                         </span>
                         <input 
                             ref={fileInputRef}
@@ -79,9 +83,9 @@ export const VisualStyleForm: React.FC<VisualStyleFormProps> = ({ onSubmit, isLo
                             onChange={handleFileChange} 
                             disabled={isLoading}
                         />
-                        <p className="pl-1">или перетащите их сюда</p>
+                        <p className="pl-1">{t('visual_form.drag_drop')}</p>
                     </div>
-                    <p className="text-xs text-gray-500">PNG, JPG, GIF до 10MB</p>
+                    <p className="text-xs text-gray-500">{t('visual_form.file_types')}</p>
                 </div>
             </div>
 
@@ -99,7 +103,7 @@ export const VisualStyleForm: React.FC<VisualStyleFormProps> = ({ onSubmit, isLo
                     disabled={isSubmitDisabled}
                     className="w-full flex justify-center items-center bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    {isLoading ? <LoadingSpinner /> : 'Далее'}
+                    {isLoading ? <LoadingSpinner /> : t('common.next')}
                 </button>
             </form>
         </div>

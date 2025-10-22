@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLanguage } from '../hooks/useLanguage';
 
 interface LegalPageLayoutProps {
   title: string;
@@ -7,10 +8,11 @@ interface LegalPageLayoutProps {
 }
 
 export const LegalPageLayout: React.FC<LegalPageLayoutProps> = ({ title, children, onBack }) => {
+  const { t } = useLanguage();
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <button onClick={onBack} className="text-sm font-semibold leading-6 text-indigo-400 hover:text-indigo-300 mb-8 transition-colors">
-        &larr; Назад на главную
+        &larr; {t('common.backToHome')}
       </button>
       <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-8 sm:p-12">
         <h1 className="text-3xl sm:text-4xl font-bold text-white mb-8">{title}</h1>

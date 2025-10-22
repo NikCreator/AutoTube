@@ -1,41 +1,51 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import LandingPage from './components/LandingPage';
 import LoginPage from './components/LoginPage';
 import MainAppLayout from './components/MainAppLayout';
 import PrivacyPage from './components/PrivacyPage';
 import TermsPage from './components/TermsPage';
 import ContactPage from './components/ContactPage';
+import { LanguageProvider } from './contexts/LanguageContext';
 
 export type Page = 'landing' | 'login' | 'dashboard' | 'privacy' | 'terms' | 'contact';
-export type DashboardView = 'templates' | 'videos' | 'credits' | 'settings';
+export type DashboardView = 'templates' | 'videos' | 'scheduler' | 'credits' | 'team' | 'settings' | 'profile';
+
 
 const App: React.FC = () => {
     const [page, setPage] = useState<Page>('landing');
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-    
+
+    useEffect(() => {
+        // Simple auth persistence for better DX
+        const loggedIn = localStorage.getItem('isAuthenticated');
+        if (loggedIn === 'true') {
+            setIsAuthenticated(true);
+            setPage('dashboard');
+        }
+    }, []);
+
     const handleLogin = () => {
         setIsAuthenticated(true);
+        localStorage.setItem('isAuthenticated', 'true');
         setPage('dashboard');
     };
-    
+
     const handleLogout = () => {
         setIsAuthenticated(false);
+        localStorage.removeItem('isAuthenticated');
         setPage('landing');
     };
-    
-    const handleGetStarted = () => {
-        setPage('login');
+
+    const handleNavigate = (newPage: Page) => {
+        setPage(newPage);
     };
 
-    const handleNavigate = (targetPage: Page) => {
-        setPage(targetPage);
-    }
-    
-    const renderContent = () => {
-        if (isAuthenticated && page === 'dashboard') {
-            return <MainAppLayout onLogout={handleLogout} />;
+    const renderPage = () => {
+        if (page === 'dashboard' && isAuthenticated) {
+            return <MainAppLayout onLogout={handleLogout} onNavigate={handleNavigate} />;
         }
-
+        
         switch (page) {
             case 'login':
                 return <LoginPage onLogin={handleLogin} />;
@@ -47,15 +57,26 @@ const App: React.FC = () => {
                 return <ContactPage onBack={() => setPage('landing')} />;
             case 'landing':
             default:
-                return <LandingPage onGetStarted={handleGetStarted} onNavigate={handleNavigate} />;
+                return <LandingPage 
+                    onGetStarted={() => setPage('login')}
+                    onNavigate={handleNavigate}
+                    isAuthenticated={isAuthenticated}
+                    onGoToDashboard={() => setPage('dashboard')}
+                />;
         }
-    }
-
+    };
+    
     return (
-        <div className="bg-gray-900">
-            {renderContent()}
+        <div className="bg-gray-900 min-h-screen">
+            {renderPage()}
         </div>
     );
 };
 
-export default App;
+const WrappedApp: React.FC = () => (
+    <LanguageProvider>
+        <App />
+    </LanguageProvider>
+);
+
+export default WrappedApp;

@@ -1,20 +1,22 @@
 import React from 'react';
 import { GoogleIcon } from './icons';
+import { useLanguage } from '../hooks/useLanguage';
 
 interface LoginPageProps {
     onLogin: () => void;
 }
 
 const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
+    const { t } = useLanguage();
     return (
         <div className="flex min-h-[calc(100vh-64px)] items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
             <div className="w-full max-w-md space-y-8">
                 <div>
                     <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-white">
-                        Добро пожаловать в AutoTube
+                        {t('login.title')}
                     </h2>
                     <p className="mt-2 text-center text-sm text-gray-400">
-                        Быстрый вход для начала работы с вашими шаблонами.
+                        {t('login.subtitle')}
                     </p>
                 </div>
                 <div className="mt-8 space-y-6">
@@ -26,7 +28,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                         <span className="absolute inset-y-0 left-0 flex items-center pl-3">
                             <GoogleIcon className="h-5 w-5 text-indigo-300" aria-hidden="true" />
                         </span>
-                        Войти через Google
+                        {t('login.google_signin')}
                     </button>
                 </div>
             </div>

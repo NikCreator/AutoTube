@@ -1,6 +1,6 @@
-
 import React from 'react';
 import { LoadingSpinner } from './LoadingSpinner';
+import { useLanguage } from '../hooks/useLanguage';
 
 interface AnalysisResultProps {
     title: string;
@@ -9,6 +9,7 @@ interface AnalysisResultProps {
 }
 
 export const AnalysisResult: React.FC<AnalysisResultProps> = ({ title, content, isLoading }) => {
+    const { t } = useLanguage();
     return (
         <div className="bg-gray-800 rounded-xl shadow-2xl p-6 border border-gray-700 h-full">
             <h3 className="text-xl font-bold mb-4 text-gray-200">{title}</h3>
@@ -17,13 +18,13 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({ title, content, 
                     <div className="flex items-center justify-center h-full">
                         <div className="flex flex-col items-center">
                             <LoadingSpinner />
-                            <span className="mt-2 text-gray-400">Анализ...</span>
+                            <span className="mt-2 text-gray-400">{t('common.analyzing')}</span>
                         </div>
                     </div>
                 )}
                 {!isLoading && !content && (
                     <div className="flex items-center justify-center h-full text-gray-500">
-                        Результат появится здесь
+                        {t('analysis_result.placeholder')}
                     </div>
                 )}
                 {!isLoading && content && (

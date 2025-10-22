@@ -1,15 +1,17 @@
-
 import React, { useState } from 'react';
 import { LoadingSpinner } from './LoadingSpinner';
 import { YoutubeIcon, PlusIcon, TrashIcon } from './icons';
+import { useLanguage } from '../hooks/useLanguage';
 
 interface CompetitorAnalysisFormProps {
     onSubmit: (links: string[]) => void;
     isLoading: boolean;
+    initialLinks?: string[];
 }
 
-export const CompetitorAnalysisForm: React.FC<CompetitorAnalysisFormProps> = ({ onSubmit, isLoading }) => {
-    const [links, setLinks] = useState<string[]>(['']);
+export const CompetitorAnalysisForm: React.FC<CompetitorAnalysisFormProps> = ({ onSubmit, isLoading, initialLinks }) => {
+    const { t } = useLanguage();
+    const [links, setLinks] = useState<string[]>(initialLinks && initialLinks.length > 0 ? initialLinks : ['']);
     
     const handleAddLink = () => {
         if (links.length < 3) {
@@ -44,10 +46,10 @@ export const CompetitorAnalysisForm: React.FC<CompetitorAnalysisFormProps> = ({ 
         <div className="bg-gray-800 rounded-xl shadow-2xl p-6 border border-gray-700">
             <h2 className="text-xl font-bold mb-4 flex items-center">
                 <YoutubeIcon className="h-6 w-6 mr-2 text-red-500" />
-                Фаза 1A: Анализ конкурентов
+                {t('competitor_form.title')}
             </h2>
             <p className="text-gray-400 mb-4 text-sm">
-                Введите 1-3 ссылки на YouTube видео ваших конкурентов для анализа структуры, темпа и тональности.
+                {t('competitor_form.subtitle')}
             </p>
             <form onSubmit={handleSubmit} className="space-y-4">
                 {links.map((link, index) => (
@@ -79,7 +81,7 @@ export const CompetitorAnalysisForm: React.FC<CompetitorAnalysisFormProps> = ({ 
                         disabled={isLoading}
                     >
                         <PlusIcon className="h-4 w-4 mr-1" />
-                        Добавить ссылку
+                        {t('competitor_form.add_link')}
                     </button>
                 )}
 
@@ -88,7 +90,7 @@ export const CompetitorAnalysisForm: React.FC<CompetitorAnalysisFormProps> = ({ 
                     disabled={isSubmitDisabled}
                     className="w-full flex justify-center items-center bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    {isLoading ? <LoadingSpinner /> : 'Далее'}
+                    {isLoading ? <LoadingSpinner /> : t('common.next')}
                 </button>
             </form>
         </div>
